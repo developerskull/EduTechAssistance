@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { GraduationCap, Lock, User, AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { Lock, User, AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 export default function Login() {
@@ -40,100 +40,99 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="glass-panel p-8 rounded-2xl shadow-xl shadow-slate-200/50">
-          <div className="text-center mb-8">
-            <div className="inline-flex w-14 h-14 rounded-2xl bg-indigo-600 items-center justify-center text-white shadow-lg shadow-indigo-300 mb-4">
-              <GraduationCap className="w-8 h-8" />
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 bg-[#f8f9fa]">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg border border-[#dadce0] shadow-sm">
+        {/* Google Classroom Header */}
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center space-x-1.5 mb-2">
+            <span className="text-2xl font-medium text-[#5f6368]">Google</span>
+            <span className="text-2xl font-bold text-[#1a73e8]">Exam</span>
+          </div>
+          <h1 className="text-xl font-normal text-[#202124]">Sign in</h1>
+          <p className="text-xs text-[#5f6368] mt-1">Use your Google Classroom Account</p>
+        </div>
+
+        {/* Quick Fill Demo Shortcuts */}
+        <div className="mb-6 p-3 bg-[#e8f0fe] border border-[#d2e3fc] rounded-lg space-y-1.5">
+          <div className="text-[11px] font-semibold text-[#1a73e8] uppercase tracking-wider flex items-center space-x-1">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Classroom Demo Accounts</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <button
+              type="button"
+              onClick={() => handleQuickFill('teacher_alice', 'TeacherPass123!')}
+              className="p-2 bg-white hover:bg-[#f1f3f4] border border-[#dadce0] text-[#1a73e8] rounded-md font-medium transition text-left"
+            >
+              👩‍🏫 Teacher Alice
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickFill('student_bob', 'StudentPass123!')}
+              className="p-2 bg-white hover:bg-[#f1f3f4] border border-[#dadce0] text-[#1a73e8] rounded-md font-medium transition text-left"
+            >
+              👨‍🎓 Student Bob
+            </button>
+          </div>
+        </div>
+
+        {error && (
+          <div className="mb-5 p-3 rounded-md bg-[#fce8e6] border border-[#f5c2c7] flex items-start space-x-2 text-[#d93025] text-xs">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-[#5f6368] mb-1">
+              Email or Username
+            </label>
+            <div className="relative">
+              <User className="w-4 h-4 text-[#5f6368] absolute left-3 top-3" />
+              <input
+                type="text"
+                required
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder="e.g. teacher_alice or alice@university.edu"
+                className="w-full pl-9 pr-3 py-2 rounded-md border border-[#dadce0] focus:outline-none focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] text-sm text-[#202124] bg-white"
+              />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome Back</h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">Sign in to your EduTechAssistance workspace</p>
           </div>
 
-          {/* Quick Fill Demo Shortcuts */}
-          <div className="mb-6 p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl space-y-1.5">
-            <div className="text-[11px] font-bold text-indigo-900 uppercase tracking-wider flex items-center space-x-1">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Quick Demo Fill</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => handleQuickFill('teacher_alice', 'TeacherPass123!')}
-                className="p-1.5 bg-white hover:bg-indigo-100/50 border border-indigo-200 text-indigo-700 rounded-lg font-semibold transition"
-              >
-                Teacher Alice
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickFill('student_bob', 'StudentPass123!')}
-                className="p-1.5 bg-white hover:bg-indigo-100/50 border border-indigo-200 text-indigo-700 rounded-lg font-semibold transition"
-              >
-                Student Bob
-              </button>
+          <div>
+            <label className="block text-xs font-medium text-[#5f6368] mb-1">
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-[#5f6368] absolute left-3 top-3" />
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full pl-9 pr-3 py-2 rounded-md border border-[#dadce0] focus:outline-none focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] text-sm text-[#202124] bg-white"
+              />
             </div>
           </div>
 
-          {error && (
-            <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start space-x-3 text-rose-700 text-xs sm:text-sm">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Username or Email
-              </label>
-              <div className="relative">
-                <User className="w-5 h-5 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="text"
-                  required
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="e.g. teacher_alice or user@school.edu"
-                  className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm bg-white"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm bg-white"
-                />
-              </div>
-            </div>
+          <div className="flex items-center justify-between pt-2">
+            <Link to="/register" className="text-xs font-medium text-[#1a73e8] hover:underline">
+              Create account
+            </Link>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full mt-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs sm:text-sm shadow-md shadow-indigo-300 transition flex items-center justify-center space-x-2 disabled:opacity-50"
+              className="py-2 px-6 rounded-md bg-[#1a73e8] hover:bg-[#1557b0] text-white font-medium text-xs shadow-xs transition disabled:opacity-50 flex items-center space-x-1.5"
             >
-              <span>{submitting ? 'Authenticating...' : 'Sign In'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>{submitting ? 'Signing in...' : 'Next'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
-          </form>
-
-          <div className="mt-8 text-center text-xs sm:text-sm text-slate-500">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-700">
-              Create an account
-            </Link>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

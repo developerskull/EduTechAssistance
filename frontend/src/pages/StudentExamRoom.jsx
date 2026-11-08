@@ -10,7 +10,6 @@ import {
   ArrowLeft,
   Bookmark,
   BookmarkCheck,
-  ListOrdered,
   X
 } from 'lucide-react';
 import { studentAPI } from '../services/api';
@@ -117,7 +116,7 @@ export default function StudentExamRoom() {
         answer_text: val
       }));
       await studentAPI.submitExam(attemptId, payload);
-      toast.success('Exam submitted successfully!');
+      toast.success('Exam submitted to GoogleExam Classroom successfully!');
       navigate(`/results/${attemptId}`);
     } catch (err) {
       toast.error(err.response?.data?.error?.message || 'Failed to submit exam');
@@ -135,10 +134,10 @@ export default function StudentExamRoom() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-12 h-12 rounded-full border-4 border-indigo-200 border-t-indigo-600 animate-spin mb-4" />
-        <h2 className="text-base font-bold text-slate-800">Preparing Secure Examination Session...</h2>
-        <p className="text-xs text-slate-500 mt-1">Synchronizing server countdown timer and question bank.</p>
+      <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-10 h-10 rounded-full border-3 border-[#e8f0fe] border-t-[#1a73e8] animate-spin mb-3" />
+        <h2 className="text-sm font-medium text-[#202124]">Loading GoogleExam Quiz Session...</h2>
+        <p className="text-xs text-[#5f6368] mt-1">Connecting to Google Classroom server and starting timer.</p>
       </div>
     );
   }
@@ -150,37 +149,42 @@ export default function StudentExamRoom() {
   const percentComplete = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
-      {/* Exam Header */}
-      <header className="bg-white border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between sticky top-0 z-40 shadow-xs">
+    <div className="min-h-screen bg-[#f8f9fa] flex flex-col">
+      {/* Exam Header Styled like Google Forms */}
+      <header className="bg-white border-b border-[#dadce0] px-4 sm:px-8 py-3 flex items-center justify-between sticky top-0 z-40 shadow-xs">
         <div>
-          <h1 className="text-sm sm:text-base font-bold text-slate-900">{examData?.title}</h1>
-          <div className="flex items-center space-x-2 text-xs text-slate-500 mt-0.5">
+          <div className="flex items-center space-x-2">
+            <span className="text-xs font-semibold text-[#1a73e8] bg-[#e8f0fe] px-2 py-0.5 rounded">
+              GoogleExam Quiz
+            </span>
+            <h1 className="text-sm sm:text-base font-medium text-[#202124]">{examData?.title}</h1>
+          </div>
+          <div className="flex items-center space-x-2 text-xs text-[#5f6368] mt-0.5">
             <span>
-              Question <strong className="text-slate-800">{currentIdx + 1}</strong> of {totalQuestions}
+              Question <strong className="text-[#202124]">{currentIdx + 1}</strong> of {totalQuestions}
             </span>
             <span>•</span>
-            <span className="font-semibold text-emerald-600">{answeredCount} Answered</span>
+            <span className="font-medium text-[#137333]">{answeredCount} Answered</span>
             {flaggedCount > 0 && (
               <>
                 <span>•</span>
-                <span className="font-semibold text-amber-600">{flaggedCount} Flagged</span>
+                <span className="font-medium text-[#e37400]">{flaggedCount} Flagged</span>
               </>
             )}
           </div>
         </div>
 
-        {/* Live Timer & Submit */}
+        {/* Live Timer & Submit Button */}
         <div className="flex items-center space-x-3 sm:space-x-4">
-          <span className="text-[11px] font-medium text-slate-400 hidden md:inline">
+          <span className="text-[11px] font-medium text-[#5f6368] hidden md:inline">
             {autosaveStatus}
           </span>
 
           <div
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-mono font-bold text-xs sm:text-sm shadow-xs ${
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md font-mono font-bold text-xs sm:text-sm ${
               remainingSeconds < 300
-                ? 'bg-rose-50 text-rose-700 border border-rose-200 animate-pulse'
-                : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                ? 'bg-[#fce8e6] text-[#d93025] border border-[#f5c2c7] animate-pulse'
+                : 'bg-[#e8f0fe] text-[#1a73e8] border border-[#d2e3fc]'
             }`}
           >
             <Clock className="w-4 h-4" />
@@ -190,63 +194,63 @@ export default function StudentExamRoom() {
           <button
             onClick={() => setShowSubmitModal(true)}
             disabled={submitting}
-            className="flex items-center space-x-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs transition disabled:opacity-50"
+            className="flex items-center space-x-1.5 px-4 py-2 bg-[#1a73e8] hover:bg-[#1557b0] text-white rounded-md text-xs font-medium shadow-xs transition disabled:opacity-50"
           >
             <Send className="w-3.5 h-3.5" />
-            <span>Finish & Submit</span>
+            <span>Submit Exam</span>
           </button>
         </div>
       </header>
 
-      {/* Progress Bar */}
-      <div className="w-full bg-slate-200 h-1.5">
+      {/* Progress Bar (Google Blue) */}
+      <div className="w-full bg-[#dadce0] h-1">
         <div
-          className="bg-indigo-600 h-1.5 transition-all duration-300"
+          className="bg-[#1a73e8] h-1 transition-all duration-300"
           style={{ width: `${percentComplete}%` }}
         />
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-5xl mx-auto w-full p-4 sm:p-6 flex-1 flex flex-col justify-between gap-6">
+      <div className="max-w-4xl mx-auto w-full p-4 sm:p-6 flex-1 flex flex-col justify-between gap-6">
         {currentQ && (
-          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-            <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-3">
+          <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xs border border-[#dadce0] border-t-4 border-t-[#1a73e8] space-y-6">
+            <div className="flex justify-between items-center text-xs text-[#5f6368] border-b border-[#dadce0] pb-3">
               <div className="flex items-center space-x-2">
-                <span className="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md">
+                <span className="bg-[#f1f3f4] text-[#202124] px-2.5 py-1 rounded font-medium">
                   Question {currentIdx + 1}
                 </span>
-                <span className="text-slate-400 capitalize">{currentQ.question_type.replace('_', ' ')}</span>
+                <span className="capitalize">{currentQ.question_type.replace('_', ' ')}</span>
               </div>
 
               <div className="flex items-center space-x-3">
                 <button
                   type="button"
                   onClick={() => toggleFlag(currentQ.id)}
-                  className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold transition ${
+                  className={`flex items-center space-x-1 px-2.5 py-1 rounded text-xs font-medium transition ${
                     flagged[currentQ.id]
-                      ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                      : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+                      ? 'bg-[#fef7e0] text-[#e37400] border border-[#fde293]'
+                      : 'bg-[#f8f9fa] text-[#5f6368] hover:bg-[#f1f3f4] border border-[#dadce0]'
                   }`}
                 >
                   {flagged[currentQ.id] ? (
-                    <BookmarkCheck className="w-3.5 h-3.5 text-amber-700" />
+                    <BookmarkCheck className="w-3.5 h-3.5 text-[#e37400]" />
                   ) : (
-                    <Bookmark className="w-3.5 h-3.5 text-slate-400" />
+                    <Bookmark className="w-3.5 h-3.5 text-[#5f6368]" />
                   )}
-                  <span>{flagged[currentQ.id] ? 'Flagged' : 'Flag for Review'}</span>
+                  <span>{flagged[currentQ.id] ? 'Flagged' : 'Flag'}</span>
                 </button>
 
-                <span className="text-indigo-600 font-bold bg-indigo-50/70 px-2.5 py-1 rounded-md">
+                <span className="text-[#1a73e8] font-semibold bg-[#e8f0fe] px-2.5 py-1 rounded">
                   {currentQ.points} Point{currentQ.points > 1 ? 's' : ''}
                 </span>
               </div>
             </div>
 
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            <h2 className="text-base sm:text-lg font-medium text-[#202124] leading-relaxed">
               {currentQ.question_text}
             </h2>
 
-            {/* Answer Input based on type */}
+            {/* Answer Input styled like Google Forms */}
             <div className="pt-2">
               {currentQ.question_type === 'multiple_choice' && (
                 <div className="space-y-2.5">
@@ -258,17 +262,17 @@ export default function StudentExamRoom() {
                         key={oIdx}
                         type="button"
                         onClick={() => handleAnswerChange(currentQ.id, opt)}
-                        className={`w-full text-left p-3.5 rounded-xl border-2 text-xs sm:text-sm font-medium transition flex items-center space-x-3 ${
+                        className={`w-full text-left p-3.5 rounded-lg border text-xs sm:text-sm transition flex items-center space-x-3 ${
                           isSelected
-                            ? 'border-indigo-600 bg-indigo-50/80 text-indigo-950 font-bold shadow-xs'
-                            : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700'
+                            ? 'border-[#1a73e8] bg-[#e8f0fe] text-[#1a73e8] font-medium'
+                            : 'border-[#dadce0] hover:bg-[#f8f9fa] bg-white text-[#3c4043]'
                         }`}
                       >
                         <span
-                          className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs flex-shrink-0 ${
+                          className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0 border ${
                             isSelected
-                              ? 'bg-indigo-600 text-white'
-                              : 'bg-slate-100 text-slate-600 border border-slate-300'
+                              ? 'bg-[#1a73e8] text-white border-[#1a73e8]'
+                              : 'bg-white text-[#5f6368] border-[#dadce0]'
                           }`}
                         >
                           {letter}
@@ -281,7 +285,7 @@ export default function StudentExamRoom() {
               )}
 
               {currentQ.question_type === 'true_false' && (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {['True', 'False'].map((tf) => {
                     const isSelected = answers[currentQ.id] === tf;
                     return (
@@ -289,10 +293,10 @@ export default function StudentExamRoom() {
                         key={tf}
                         type="button"
                         onClick={() => handleAnswerChange(currentQ.id, tf)}
-                        className={`p-4 rounded-xl border-2 font-bold text-center text-sm sm:text-base transition ${
+                        className={`p-3.5 rounded-lg border font-medium text-center text-xs sm:text-sm transition ${
                           isSelected
-                            ? 'border-indigo-600 bg-indigo-50/80 text-indigo-950 shadow-xs'
-                            : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700'
+                            ? 'border-[#1a73e8] bg-[#e8f0fe] text-[#1a73e8]'
+                            : 'border-[#dadce0] hover:bg-[#f8f9fa] bg-white text-[#3c4043]'
                         }`}
                       >
                         {tf}
@@ -308,11 +312,11 @@ export default function StudentExamRoom() {
                     rows={currentQ.question_type === 'essay' ? 6 : 4}
                     value={answers[currentQ.id] || ''}
                     onChange={(e) => handleAnswerChange(currentQ.id, e.target.value)}
-                    placeholder="Provide your complete analytical response here..."
-                    className="w-full p-4 border border-slate-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white leading-relaxed"
+                    placeholder="Type your response here..."
+                    className="w-full p-3.5 border border-[#dadce0] rounded-lg text-xs sm:text-sm focus:outline-none focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] bg-white leading-relaxed text-[#202124]"
                   />
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Your response will be evaluated by your instructor using side-by-side model criteria.
+                  <p className="text-[11px] text-[#5f6368] mt-1">
+                    Your response will be evaluated by your instructor using side-by-side criteria.
                   </p>
                 </div>
               )}
@@ -320,20 +324,20 @@ export default function StudentExamRoom() {
           </div>
         )}
 
-        {/* Question Navigation & Quick-Jump Palette */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+        {/* Question Navigation Palette */}
+        <div className="bg-white p-4 rounded-lg border border-[#dadce0] shadow-xs space-y-3">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <button
               type="button"
               disabled={currentIdx === 0}
               onClick={() => setCurrentIdx(currentIdx - 1)}
-              className="w-full sm:w-auto flex items-center justify-center space-x-1.5 px-4 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 transition disabled:opacity-40"
+              className="w-full sm:w-auto flex items-center justify-center space-x-1.5 px-4 py-2 bg-white border border-[#dadce0] rounded-md text-xs font-medium text-[#3c4043] hover:bg-[#f8f9fa] transition disabled:opacity-40"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Previous Question</span>
+              <span>Previous</span>
             </button>
 
-            {/* Quick jump question tokens */}
+            {/* Quick jump question numbers */}
             <div className="flex flex-wrap items-center justify-center gap-1.5 max-w-lg px-2">
               {questions.map((q, idx) => {
                 const isAnswered = Boolean(answers[q.id]?.toString().trim());
@@ -344,21 +348,18 @@ export default function StudentExamRoom() {
                   <button
                     key={q.id}
                     onClick={() => setCurrentIdx(idx)}
-                    title={`Question ${idx + 1}: ${isFlagged ? 'Flagged' : isAnswered ? 'Answered' : 'Unanswered'}`}
-                    className={`w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center relative transition ${
+                    title={`Question ${idx + 1}`}
+                    className={`w-7 h-7 rounded text-xs font-medium flex items-center justify-center relative transition ${
                       isCurrent
-                        ? 'bg-indigo-600 text-white ring-2 ring-indigo-400 ring-offset-1'
+                        ? 'bg-[#1a73e8] text-white font-bold ring-2 ring-[#1a73e8] ring-offset-1'
                         : isFlagged
-                        ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                        ? 'bg-[#fef7e0] text-[#e37400] border border-[#fde293]'
                         : isAnswered
-                        ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                        : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
+                        ? 'bg-[#e6f4ea] text-[#137333] border border-[#ceead6]'
+                        : 'bg-[#f8f9fa] text-[#5f6368] border border-[#dadce0] hover:bg-[#f1f3f4]'
                     }`}
                   >
                     {idx + 1}
-                    {isFlagged && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 absolute top-0.5 right-0.5" />
-                    )}
                   </button>
                 );
               })}
@@ -368,9 +369,9 @@ export default function StudentExamRoom() {
               type="button"
               disabled={currentIdx === totalQuestions - 1}
               onClick={() => setCurrentIdx(currentIdx + 1)}
-              className="w-full sm:w-auto flex items-center justify-center space-x-1.5 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition disabled:opacity-40"
+              className="w-full sm:w-auto flex items-center justify-center space-x-1.5 px-4 py-2 bg-[#1a73e8] text-white rounded-md text-xs font-medium hover:bg-[#1557b0] transition disabled:opacity-40"
             >
-              <span>Next Question</span>
+              <span>Next</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -379,45 +380,45 @@ export default function StudentExamRoom() {
 
       {/* Submission Confirmation Modal */}
       {showSubmitModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-slide-down">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-                <AlertTriangle className="w-5 h-5 text-amber-600" />
-                <span>Confirm Final Submission</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl space-y-4 animate-slide-down border border-[#dadce0]">
+            <div className="flex items-center justify-between border-b border-[#dadce0] pb-3">
+              <h3 className="text-sm font-semibold text-[#202124] flex items-center space-x-2">
+                <AlertTriangle className="w-5 h-5 text-[#f29900]" />
+                <span>Submit Exam to Classroom?</span>
               </h3>
               <button
                 onClick={() => setShowSubmitModal(false)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-[#5f6368] hover:text-[#202124]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="text-xs text-slate-600 space-y-2">
-              <p>Are you sure you are ready to conclude your examination?</p>
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
-                <div className="flex justify-between font-semibold">
+            <div className="text-xs text-[#5f6368] space-y-2">
+              <p>Review your progress before turning in your quiz:</p>
+              <div className="bg-[#f8f9fa] p-3 rounded border border-[#dadce0] space-y-1">
+                <div className="flex justify-between font-medium">
                   <span>Questions Attempted:</span>
-                  <span className="text-emerald-600 font-bold">
+                  <span className="text-[#137333] font-bold">
                     {answeredCount} / {totalQuestions}
                   </span>
                 </div>
-                <div className="flex justify-between font-semibold">
+                <div className="flex justify-between font-medium">
                   <span>Unanswered Questions:</span>
-                  <span className="text-rose-600 font-bold">
+                  <span className="text-[#d93025] font-bold">
                     {totalQuestions - answeredCount}
                   </span>
                 </div>
                 {flaggedCount > 0 && (
-                  <div className="flex justify-between font-semibold">
+                  <div className="flex justify-between font-medium">
                     <span>Flagged for Review:</span>
-                    <span className="text-amber-600 font-bold">{flaggedCount}</span>
+                    <span className="text-[#e37400] font-bold">{flaggedCount}</span>
                   </div>
                 )}
               </div>
-              <p className="text-[11px] text-slate-400">
-                Once submitted, objective questions will be evaluated immediately. You cannot re-enter this exam session.
+              <p className="text-[11px] text-[#5f6368]">
+                Once submitted, objective questions will be auto-graded and subjective answers sent for teacher evaluation.
               </p>
             </div>
 
@@ -425,7 +426,7 @@ export default function StudentExamRoom() {
               <button
                 type="button"
                 onClick={() => setShowSubmitModal(false)}
-                className="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition"
+                className="flex-1 py-2 px-4 bg-white border border-[#dadce0] hover:bg-[#f1f3f4] text-[#3c4043] font-medium text-xs rounded-md transition"
               >
                 Return to Exam
               </button>
@@ -433,9 +434,9 @@ export default function StudentExamRoom() {
                 type="button"
                 disabled={submitting}
                 onClick={executeSubmit}
-                className="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition disabled:opacity-50"
+                className="flex-1 py-2 px-4 bg-[#1a73e8] hover:bg-[#1557b0] text-white font-medium text-xs rounded-md shadow-xs transition disabled:opacity-50"
               >
-                {submitting ? 'Submitting...' : 'Yes, Submit Exam'}
+                {submitting ? 'Submitting...' : 'Yes, Submit'}
               </button>
             </div>
           </div>

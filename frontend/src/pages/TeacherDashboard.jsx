@@ -12,8 +12,9 @@ import {
   BarChart2,
   Printer,
   Search,
-  Filter,
-  Users
+  Users,
+  Layers,
+  GraduationCap
 } from 'lucide-react';
 import { aiAPI, teacherAPI } from '../services/api';
 import CreateAssignmentWizard from '../components/CreateAssignmentWizard';
@@ -78,7 +79,7 @@ export default function TeacherDashboard() {
 
     try {
       const res = await aiAPI.uploadPdf(formData);
-      toast.success(`Uploaded and indexed "${file.name}" (${res.data.data.chunks_indexed} chunks)!`);
+      toast.success(`Classroom document "${file.name}" indexed successfully (${res.data.data.chunks_indexed} chunks)!`);
       loadData();
       setSelectedDocId(res.data.data.document.id);
     } catch (err) {
@@ -102,13 +103,13 @@ export default function TeacherDashboard() {
     try {
       const res = await aiAPI.generateQuestions({
         document_id: selectedDocId ? parseInt(selectedDocId, 10) : null,
-        topic: topic || 'Course Assessment',
+        topic: topic || 'Classroom Assessment',
         num_questions: parseInt(numQuestions, 10),
         difficulty,
         question_types: selectedTypes
       });
       setGeneratedPaper(res.data.data);
-      toast.success(`Successfully generated ${res.data.data.questions?.length || 0} questions via Gemini RAG!`);
+      toast.success(`GoogleExam synthesized ${res.data.data.questions?.length || 0} questions via Gemini RAG!`);
     } catch (err) {
       toast.error(err.response?.data?.error?.message || 'Question generation failed');
     } finally {
@@ -128,113 +129,118 @@ export default function TeacherDashboard() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Top Header */}
-      <div className="glass-panel p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Teacher Workspace</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Generate balanced question banks from course notes, schedule examinations, and evaluate submissions.
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      {/* Google Classroom Class Banner */}
+      <div className="bg-[#137333] text-white p-6 sm:p-8 rounded-lg shadow-sm relative overflow-hidden flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div className="relative z-10 space-y-1">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#e6f4ea] bg-[#0d5224] px-2.5 py-0.5 rounded">
+            Classroom Course: Section A
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight">
+            Computer Science & Academic Assessment
+          </h1>
+          <p className="text-xs text-[#e6f4ea]">
+            Instructor Workspace • Class Code: <span className="font-mono font-bold bg-[#0d5224] px-2 py-0.5 rounded">g-exam-2026</span>
           </p>
         </div>
 
         <button
           onClick={() => setShowWizard(true)}
-          className="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-xs transition"
+          className="relative z-10 bg-white hover:bg-[#f1f3f4] text-[#137333] font-medium text-xs px-4 py-2.5 rounded-md shadow-sm transition flex items-center space-x-1.5"
         >
-          <Plus className="w-4 h-4" />
-          <span>Create New Assignment</span>
+          <Plus className="w-4 h-4 text-[#137333]" />
+          <span>+ Create Assignment</span>
         </button>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="flex space-x-2 border-b border-slate-200 pb-2">
+      {/* Classroom Secondary Tabs Navigation */}
+      <div className="flex border-b border-[#dadce0] bg-white rounded-t-lg px-2">
         <button
           onClick={() => setActiveTab('generator')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition ${
+          className={`px-5 py-3 text-xs font-medium border-b-2 transition flex items-center space-x-2 ${
             activeTab === 'generator'
-              ? 'bg-indigo-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'border-[#1a73e8] text-[#1a73e8] font-bold'
+              : 'border-transparent text-[#5f6368] hover:text-[#202124]'
           }`}
         >
           <Sparkles className="w-4 h-4" />
-          <span>AI Question Generator</span>
+          <span>Classwork: AI Generator</span>
         </button>
 
         <button
           onClick={() => setActiveTab('exams')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition ${
+          className={`px-5 py-3 text-xs font-medium border-b-2 transition flex items-center space-x-2 ${
             activeTab === 'exams'
-              ? 'bg-indigo-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'border-[#1a73e8] text-[#1a73e8] font-bold'
+              : 'border-transparent text-[#5f6368] hover:text-[#202124]'
           }`}
         >
           <BookOpen className="w-4 h-4" />
-          <span>Created Exams ({exams.length})</span>
+          <span>Exams Repository ({exams.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('evaluations')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition ${
+          className={`px-5 py-3 text-xs font-medium border-b-2 transition flex items-center space-x-2 ${
             activeTab === 'evaluations'
-              ? 'bg-indigo-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
+              ? 'border-[#1a73e8] text-[#1a73e8] font-bold'
+              : 'border-transparent text-[#5f6368] hover:text-[#202124]'
           }`}
         >
           <Clock className="w-4 h-4" />
-          <span>Pending Evaluations ({pendingEvals.length})</span>
+          <span>Grades & Submissions ({pendingEvals.length})</span>
         </button>
       </div>
 
       {/* TAB 1: AI QUESTION GENERATOR */}
       {activeTab === 'generator' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Column: Upload & Controls */}
           <div className="lg:col-span-5 space-y-6">
             {/* PDF Upload Card */}
-            <div className="glass-card p-6 rounded-2xl space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center space-x-2">
-                <FileText className="w-4 h-4 text-indigo-600" />
-                <span>1. Ingest Course Document (RAG)</span>
+            <div className="bg-white p-6 rounded-lg border border-[#dadce0] shadow-xs space-y-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#5f6368] flex items-center space-x-2">
+                <FileText className="w-4 h-4 text-[#1a73e8]" />
+                <span>1. Attach Course PDF (RAG)</span>
               </h3>
 
               <div
                 {...getRootProps()}
-                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition ${
+                className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition ${
                   isDragActive
-                    ? 'border-indigo-500 bg-indigo-50/50'
-                    : 'border-slate-300 hover:border-indigo-400 bg-slate-50'
+                    ? 'border-[#1a73e8] bg-[#e8f0fe]'
+                    : 'border-[#dadce0] hover:border-[#1a73e8] bg-[#f8f9fa]'
                 }`}
               >
                 <input {...getInputProps()} />
-                <UploadCloud className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                <p className="text-xs font-semibold text-slate-700">
+                <UploadCloud className="w-8 h-8 text-[#5f6368] mx-auto mb-2" />
+                <p className="text-xs font-medium text-[#202124]">
                   {uploading
-                    ? 'Extracting and embedding PDF...'
-                    : 'Drag & drop textbook/syllabus PDF, or browse'}
+                    ? 'Parsing PDF and indexing embeddings...'
+                    : 'Attach syllabus / lecture note PDF (up to 10 MB)'}
                 </p>
-                <p className="text-[11px] text-slate-400 mt-1">Maximum file size: 10 MB (searchable PDF)</p>
+                <p className="text-[11px] text-[#5f6368] mt-1">Google Gemini RAG extracts semantic chunks automatically</p>
               </div>
             </div>
 
             {/* Question Generation Form */}
-            <form onSubmit={handleGenerateQuestions} className="glass-card p-6 rounded-2xl space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-indigo-600" />
-                <span>2. Configure Question Parameters</span>
+            <form onSubmit={handleGenerateQuestions} className="bg-white p-6 rounded-lg border border-[#dadce0] shadow-xs space-y-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#5f6368] flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-[#1a73e8]" />
+                <span>2. Question Synthesis Parameters</span>
               </h3>
 
               {/* Source Document Selection */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                  Source Document (For Grounded Context)
+                <label className="block text-xs font-medium text-[#5f6368] mb-1">
+                  Attached Classroom Document
                 </label>
                 <select
                   value={selectedDocId}
                   onChange={(e) => setSelectedDocId(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border border-[#dadce0] rounded-md text-xs sm:text-sm bg-white focus:outline-none focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8]"
                 >
-                  <option value="">No document (Direct concept generation)</option>
+                  <option value="">No document (Direct topic generation)</option>
                   {documents.map((d) => (
                     <option key={d.id} value={d.id}>
                       {d.title} ({d.chunks_count} semantic chunks)
@@ -245,8 +251,8 @@ export default function TeacherDashboard() {
 
               {/* Topic */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                  Topic / Syllabus Chapter
+                <label className="block text-xs font-medium text-[#5f6368] mb-1">
+                  Topic / Chapter Focus
                 </label>
                 <input
                   type="text"
@@ -254,20 +260,20 @@ export default function TeacherDashboard() {
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="e.g. Memory Virtualization & Paging Algorithms"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-indigo-500 bg-white"
+                  className="w-full px-3 py-2 border border-[#dadce0] rounded-md text-xs sm:text-sm focus:outline-none focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8] bg-white"
                 />
               </div>
 
               {/* Difficulty & Count */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+                  <label className="block text-xs font-medium text-[#5f6368] mb-1">
                     Difficulty
                   </label>
                   <select
                     value={difficulty}
                     onChange={(e) => setDifficulty(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white"
+                    className="w-full px-3 py-2 border border-[#dadce0] rounded-md text-xs sm:text-sm bg-white"
                   >
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
@@ -276,8 +282,8 @@ export default function TeacherDashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                    Question Count
+                  <label className="block text-xs font-medium text-[#5f6368] mb-1">
+                    Questions Count
                   </label>
                   <input
                     type="number"
@@ -285,14 +291,14 @@ export default function TeacherDashboard() {
                     max="15"
                     value={numQuestions}
                     onChange={(e) => setNumQuestions(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm text-center bg-white"
+                    className="w-full px-3 py-2 border border-[#dadce0] rounded-md text-xs sm:text-sm text-center bg-white"
                   />
                 </div>
               </div>
 
-              {/* Question Types */}
+              {/* Question Formats */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+                <label className="block text-xs font-medium text-[#5f6368] mb-1.5">
                   Question Formats
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -306,10 +312,10 @@ export default function TeacherDashboard() {
                       key={key}
                       type="button"
                       onClick={() => toggleType(key)}
-                      className={`px-3 py-2 text-xs font-semibold rounded-lg border text-left transition ${
+                      className={`px-3 py-2 text-xs font-medium rounded-md border text-left transition ${
                         selectedTypes.includes(key)
-                          ? 'bg-indigo-50 border-indigo-500 text-indigo-700 font-bold'
-                          : 'bg-white border-slate-200 text-slate-600'
+                          ? 'bg-[#e8f0fe] border-[#1a73e8] text-[#1a73e8] font-bold'
+                          : 'bg-white border-[#dadce0] text-[#5f6368] hover:bg-[#f8f9fa]'
                       }`}
                     >
                       {label}
@@ -321,10 +327,10 @@ export default function TeacherDashboard() {
               <button
                 type="submit"
                 disabled={generating}
-                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-xs transition flex items-center justify-center space-x-2 disabled:opacity-50"
+                className="w-full py-2.5 bg-[#1a73e8] hover:bg-[#1557b0] text-white rounded-md text-xs sm:text-sm font-medium shadow-xs transition flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>{generating ? 'Synthesizing with Gemini AI...' : 'Generate Questions'}</span>
+                <span>{generating ? 'Generating with Gemini AI...' : 'Generate Questions'}</span>
               </button>
             </form>
           </div>
@@ -332,15 +338,15 @@ export default function TeacherDashboard() {
           {/* Right Column: Generated Output Preview */}
           <div className="lg:col-span-7">
             {generatedPaper ? (
-              <div className="glass-card p-6 rounded-2xl space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-4 gap-3">
+              <div className="bg-white p-6 rounded-lg border border-[#dadce0] shadow-xs space-y-5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#dadce0] pb-4 gap-3">
                   <div>
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900">{generatedPaper.title}</h3>
-                    <p className="text-xs text-slate-500">{generatedPaper.description}</p>
+                    <h3 className="text-base font-semibold text-[#202124]">{generatedPaper.title}</h3>
+                    <p className="text-xs text-[#5f6368]">{generatedPaper.description}</p>
                   </div>
                   <button
                     onClick={() => setShowWizard(true)}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition whitespace-nowrap"
+                    className="px-4 py-2 bg-[#137333] hover:bg-[#0d5224] text-white text-xs font-medium rounded-md shadow-xs transition whitespace-nowrap"
                   >
                     Convert into Live Exam
                   </button>
@@ -348,22 +354,22 @@ export default function TeacherDashboard() {
 
                 <div className="space-y-4">
                   {generatedPaper.questions?.map((q, idx) => (
-                    <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
-                      <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+                    <div key={idx} className="p-4 rounded-lg border border-[#dadce0] bg-[#f8f9fa] space-y-2">
+                      <div className="flex items-center justify-between text-xs font-medium text-[#5f6368]">
                         <span>Question {idx + 1} ({q.points} pt)</span>
-                        <span className="uppercase text-indigo-600 font-bold">{q.question_type?.replace('_', ' ')}</span>
+                        <span className="uppercase text-[#1a73e8] font-bold">{q.question_type?.replace('_', ' ')}</span>
                       </div>
-                      <p className="text-xs sm:text-sm font-semibold text-slate-800">{q.question_text}</p>
+                      <p className="text-xs sm:text-sm font-medium text-[#202124]">{q.question_text}</p>
                       {q.options && (
                         <div className="grid grid-cols-2 gap-1.5 pt-1">
                           {q.options.map((opt, oIdx) => (
-                            <span key={oIdx} className="text-xs text-slate-600 bg-white p-2 rounded border border-slate-200">
+                            <span key={oIdx} className="text-xs text-[#3c4043] bg-white p-2 rounded border border-[#dadce0]">
                               {opt}
                             </span>
                           ))}
                         </div>
                       )}
-                      <div className="pt-2 text-xs text-emerald-800 font-medium bg-emerald-50/60 p-2 rounded-lg border border-emerald-100">
+                      <div className="pt-2 text-xs text-[#137333] font-medium bg-[#e6f4ea] p-2 rounded-md border border-[#ceead6]">
                         <span className="font-bold">Model Answer:</span> {q.correct_answer}
                       </div>
                     </div>
@@ -371,11 +377,11 @@ export default function TeacherDashboard() {
                 </div>
               </div>
             ) : (
-              <div className="glass-card p-12 rounded-2xl text-center space-y-3 border-dashed">
-                <Sparkles className="w-12 h-12 text-indigo-300 mx-auto" />
-                <h4 className="text-base font-bold text-slate-700">Ready to Generate Questions</h4>
-                <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Upload a PDF document or choose a topic to synthesize balanced question papers with multiple choice, true/false, and short answer formats.
+              <div className="bg-white p-12 rounded-lg border border-dashed border-[#dadce0] text-center space-y-3">
+                <Sparkles className="w-12 h-12 text-[#1a73e8] mx-auto opacity-40" />
+                <h4 className="text-sm font-semibold text-[#202124]">Ready to Synthesize Classroom Exam</h4>
+                <p className="text-xs text-[#5f6368] max-w-sm mx-auto">
+                  Upload a PDF document or choose a syllabus topic to create a balanced question bank with answer keys and rubric metrics.
                 </p>
               </div>
             )}
@@ -385,28 +391,28 @@ export default function TeacherDashboard() {
 
       {/* TAB 2: CREATED EXAMS */}
       {activeTab === 'exams' && (
-        <div className="glass-card p-6 rounded-2xl space-y-4">
+        <div className="bg-white p-6 rounded-lg border border-[#dadce0] shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Your Exam Repository</h3>
-              <p className="text-xs text-slate-500">Manage, export, and inspect analytics for scheduled tests.</p>
+              <h3 className="text-base font-semibold text-[#202124]">Classroom Exam Repository</h3>
+              <p className="text-xs text-[#5f6368]">Manage scheduled exams, inspect question analytics, and print exam papers.</p>
             </div>
 
             <div className="flex items-center space-x-2">
               <div className="relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <Search className="w-4 h-4 text-[#5f6368] absolute left-3 top-2.5" />
                 <input
                   type="text"
                   value={examSearch}
                   onChange={(e) => setExamSearch(e.target.value)}
                   placeholder="Search exams..."
-                  className="pl-9 pr-3 py-1.5 text-xs border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-indigo-500"
+                  className="pl-9 pr-3 py-1.5 text-xs border border-[#dadce0] rounded-md bg-white focus:outline-none focus:border-[#1a73e8]"
                 />
               </div>
 
               <button
                 onClick={() => setShowWizard(true)}
-                className="px-3 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-xs"
+                className="px-3.5 py-1.5 bg-[#1a73e8] text-white hover:bg-[#1557b0] rounded-md text-xs font-medium transition flex items-center space-x-1 shadow-xs"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>New Exam</span>
@@ -414,24 +420,24 @@ export default function TeacherDashboard() {
             </div>
           </div>
 
-          <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-200">
+          <div className="border border-[#dadce0] rounded-lg overflow-hidden divide-y divide-[#dadce0]">
             {filteredExams.length === 0 ? (
-              <div className="p-8 text-center text-xs text-slate-400">
+              <div className="p-8 text-center text-xs text-[#5f6368]">
                 {exams.length === 0 ? 'No exams created yet.' : 'No exams matching search criteria.'}
               </div>
             ) : (
               filteredExams.map((ex) => (
-                <div key={ex.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/80 transition">
+                <div key={ex.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#f8f9fa] transition">
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900">{ex.title}</h4>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <h4 className="text-sm font-semibold text-[#202124]">{ex.title}</h4>
+                    <p className="text-xs text-[#5f6368] mt-0.5">
                       <strong>{ex.questions_count}</strong> Questions | <strong>{ex.time_limit}</strong> Minutes | <strong>{ex.total_points}</strong> Total Points
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => setPrintExamData(ex)}
-                      className="px-3 py-1.5 text-xs font-semibold bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-700 rounded-lg transition flex items-center space-x-1"
+                      className="px-3 py-1.5 text-xs font-medium bg-[#e8f0fe] border border-[#d2e3fc] hover:bg-[#d2e3fc] text-[#1a73e8] rounded-md transition flex items-center space-x-1"
                       title="Print or export authentic university question paper"
                     >
                       <Printer className="w-3.5 h-3.5" />
@@ -440,7 +446,7 @@ export default function TeacherDashboard() {
 
                     <button
                       onClick={() => setOverviewExamId(ex.id)}
-                      className="px-3 py-1.5 text-xs font-semibold bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg transition flex items-center space-x-1"
+                      className="px-3 py-1.5 text-xs font-medium bg-white border border-[#dadce0] hover:bg-[#f1f3f4] text-[#3c4043] rounded-md transition flex items-center space-x-1"
                     >
                       <BarChart2 className="w-3.5 h-3.5" />
                       <span>Analytics</span>
@@ -455,37 +461,37 @@ export default function TeacherDashboard() {
 
       {/* TAB 3: PENDING EVALUATIONS */}
       {activeTab === 'evaluations' && (
-        <div className="glass-card p-6 rounded-2xl space-y-4">
+        <div className="bg-white p-6 rounded-lg border border-[#dadce0] shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-slate-900">Student Submissions Requiring Evaluation</h3>
-            <span className="text-xs text-slate-500 font-semibold">{pendingEvals.length} Pending</span>
+            <h3 className="text-base font-semibold text-[#202124]">Submissions Requiring Evaluation</h3>
+            <span className="text-xs text-[#5f6368] font-medium">{pendingEvals.length} Pending</span>
           </div>
 
-          <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-200">
+          <div className="border border-[#dadce0] rounded-lg overflow-hidden divide-y divide-[#dadce0]">
             {pendingEvals.length === 0 ? (
-              <div className="p-12 text-center text-xs text-slate-400 space-y-2">
-                <CheckCircle className="w-8 h-8 text-emerald-500 mx-auto" />
-                <p className="font-semibold text-slate-700">All submissions graded!</p>
-                <p>There are no subjective answers currently awaiting manual review.</p>
+              <div className="p-12 text-center text-xs text-[#5f6368] space-y-2">
+                <CheckCircle className="w-8 h-8 text-[#137333] mx-auto" />
+                <p className="font-semibold text-[#202124]">All submissions evaluated!</p>
+                <p>There are no student answers currently awaiting manual grading.</p>
               </div>
             ) : (
               pendingEvals.map((attempt) => (
-                <div key={attempt.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50 transition">
+                <div key={attempt.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#f8f9fa] transition">
                   <div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-sm font-bold text-slate-900">{attempt.student_name}</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800">
+                      <span className="text-sm font-semibold text-[#202124]">{attempt.student_name}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-[#fef7e0] text-[#e37400]">
                         {attempt.unverified_count} Pending Grading
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      Exam: <span className="font-semibold text-slate-700">{attempt.exam?.title}</span> | Submitted:{' '}
+                    <p className="text-xs text-[#5f6368] mt-0.5">
+                      Exam: <span className="font-medium text-[#202124]">{attempt.exam?.title}</span> | Submitted:{' '}
                       {new Date(attempt.submitted_at).toLocaleTimeString()}
                     </p>
                   </div>
                   <button
                     onClick={() => setActiveAttempt(attempt)}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-xs"
+                    className="px-4 py-2 bg-[#1a73e8] hover:bg-[#1557b0] text-white rounded-md text-xs font-medium transition shadow-xs"
                   >
                     Open Grading Workspace
                   </button>

@@ -237,3 +237,4 @@ export default function ExamPrintModal({ exam, onClose }) {
     </div>
   );
 }
+

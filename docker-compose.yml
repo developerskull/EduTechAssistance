@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: edutech_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: edutech_user
+      POSTGRES_PASSWORD: edutech_pass
+      POSTGRES_DB: edutech_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edutech_user -d edutech_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: edutech_backend
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://edutech_user:edutech_pass@db:5432/edutech_db
+      - SECRET_KEY=docker-secret-key-edutech-2026
+      - JWT_SECRET_KEY=docker-jwt-secret-key-edutech-2026
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-your_gemini_api_key_here}
+      - GEMINI_PRIMARY_MODEL=gemini-2.5-flash
+      - GEMINI_FALLBACK_MODEL=gemini-1.5-pro
+      - PORT=5000
+      - HOST=0.0.0.0
+    ports:
+      - "5000:5000"
+    volumes:
+      - backend_uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: edutech_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  backend_uploads:
+

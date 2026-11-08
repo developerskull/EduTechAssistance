@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GraduationCap, Lock, User, Mail, AlertCircle, ArrowRight, BookOpen, School } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -12,6 +13,7 @@ export default function Register() {
   const [submitting, setSubmitting] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,13 +21,16 @@ export default function Register() {
     setSubmitting(true);
     try {
       const user = await register({ username, email, password, role });
+      toast.success(`Account created! Welcome, ${user.username}.`);
       if (user.role === 'teacher' || user.role === 'admin') {
         navigate('/teacher');
       } else {
         navigate('/student');
       }
     } catch (err) {
-      setError(err.response?.data?.error?.message || 'Registration failed. Please check your details.');
+      const msg = err.response?.data?.error?.message || 'Registration failed. Please check your details.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -40,11 +45,11 @@ export default function Register() {
               <GraduationCap className="w-8 h-8" />
             </div>
             <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Create an Account</h1>
-            <p className="text-sm text-slate-500 mt-1">Join EduTechAssistance as an educator or learner</p>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">Join EduTechAssistance as an educator or learner</p>
           </div>
 
           {error && (
-            <div className="mb-5 p-4 rounded-xl bg-red-50 border border-red-200 flex items-start space-x-3 text-red-700 text-sm">
+            <div className="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start space-x-3 text-rose-700 text-xs sm:text-sm">
               <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -54,32 +59,33 @@ export default function Register() {
             {/* Role selection tabs */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
-                I am a:
+                I am registering as:
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setRole('teacher')}
-                  className={`flex items-center justify-center space-x-2 py-3 rounded-xl border-2 transition font-medium text-sm ${
+                  className={`p-3 rounded-xl border-2 flex flex-col items-center space-y-1 transition ${
                     role === 'teacher'
-                      ? 'border-indigo-600 bg-indigo-50/70 text-indigo-700 shadow-sm'
-                      : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                      ? 'border-indigo-600 bg-indigo-50/70 text-indigo-900 shadow-xs'
+                      : 'border-slate-200 hover:border-slate-300 bg-white text-slate-600'
                   }`}
                 >
-                  <School className="w-4 h-4" />
-                  <span>Teacher</span>
+                  <School className="w-5 h-5 text-indigo-600" />
+                  <span className="text-xs font-bold">Educator / Teacher</span>
                 </button>
+
                 <button
                   type="button"
                   onClick={() => setRole('student')}
-                  className={`flex items-center justify-center space-x-2 py-3 rounded-xl border-2 transition font-medium text-sm ${
+                  className={`p-3 rounded-xl border-2 flex flex-col items-center space-y-1 transition ${
                     role === 'student'
-                      ? 'border-indigo-600 bg-indigo-50/70 text-indigo-700 shadow-sm'
-                      : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                      ? 'border-indigo-600 bg-indigo-50/70 text-indigo-900 shadow-xs'
+                      : 'border-slate-200 hover:border-slate-300 bg-white text-slate-600'
                   }`}
                 >
-                  <BookOpen className="w-4 h-4" />
-                  <span>Student</span>
+                  <BookOpen className="w-5 h-5 text-indigo-600" />
+                  <span className="text-xs font-bold">Student / Learner</span>
                 </button>
               </div>
             </div>
@@ -95,7 +101,7 @@ export default function Register() {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="e.g. prof_john"
+                  placeholder="e.g. prof_sharma"
                   className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm bg-white"
                 />
               </div>
@@ -138,17 +144,17 @@ export default function Register() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full mt-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md shadow-indigo-300 transition flex items-center justify-center space-x-2 disabled:opacity-50"
+              className="w-full mt-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs sm:text-sm shadow-md shadow-indigo-300 transition flex items-center justify-center space-x-2 disabled:opacity-50"
             >
-              <span>{submitting ? 'Creating account...' : 'Create Account'}</span>
+              <span>{submitting ? 'Registering Account...' : 'Complete Registration'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-slate-500">
-            Already have an account?{' '}
+          <div className="mt-8 text-center text-xs sm:text-sm text-slate-500">
+            Already registered?{' '}
             <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-700">
-              Sign in
+              Sign in to your account
             </Link>
           </div>
         </div>
@@ -156,4 +162,3 @@ export default function Register() {
     </div>
   );
 }
-

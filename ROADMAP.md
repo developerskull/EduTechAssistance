@@ -64,14 +64,17 @@
 ---
 
 ## Phase 4: Modern Web Client (React 18 + Tailwind CSS 3) 🌐
+- [x] Flagship Landing Page with hero showcase, interactive workflow demo, and live metrics.
 - [x] Vite + React 18 application scaffold.
 - [x] Axios client with JWT interceptor and automatic token refresh.
-- [x] Authentication screens (Login, Registration, Role selection).
+- [x] Animated Toast notification system with custom context provider.
+- [x] Authentication screens (Login with quick-fill demo shortcuts, Registration with role selection).
 - [x] Teacher Dashboard & PDF dropzone upload interface.
 - [x] 2-Step Exam Assignment Creation Wizard.
+- [x] Official University Examination Paper Print & PDF Export Modal with Master Key toggle.
 - [x] Dual-panel Grading Workspace (model answer in emerald green, student answer in indigo blue, AI suggestions).
 - [x] Class Exam Overview & Question Analytics modals.
-- [x] Student Exam Portal with countdown timer, autosave indicators, and results review.
+- [x] Student Exam Portal with Question Navigation Palette, Flag for Review, countdown timer, autosave indicators, and results review.
 
 ---
 
@@ -80,4 +83,4 @@
 - [x] Multi-stage Dockerfile for frontend with Nginx reverse proxy.
 - [x] Multi-container `docker-compose.yml` (backend + postgres 16 + frontend).
 - [x] GitHub Actions CI workflow (`.github/workflows/ci.yml`).
-- [ ] (Optional) React Native Expo mobile application.
+- [x] Cross-Platform React Native Expo Mobile Application (`QuestionGenMobileApp`) with Expo Router, 5-tab navigation, and dynamic backend discovery.

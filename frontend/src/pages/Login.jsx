@@ -53,26 +53,57 @@ export default function Login() {
         </div>
 
         {/* Quick Fill Demo Shortcuts */}
-        <div className="mb-6 p-3 bg-[#e8f0fe] border border-[#d2e3fc] rounded-lg space-y-1.5">
-          <div className="text-[11px] font-semibold text-[#1a73e8] uppercase tracking-wider flex items-center space-x-1">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Classroom Demo Accounts</span>
+        <div className="mb-6 p-3 bg-[#e8f0fe] border border-[#d2e3fc] rounded-lg space-y-2">
+          <div className="text-[11px] font-semibold text-[#1a73e8] uppercase tracking-wider flex items-center justify-between">
+            <span className="flex items-center space-x-1">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>1-Click Test Accounts</span>
+            </span>
+            <span className="text-[10px] text-[#5f6368] font-normal">Click to fill</span>
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <button
               type="button"
-              onClick={() => handleQuickFill('teacher_alice', 'TeacherPass123!')}
-              className="p-2 bg-white hover:bg-[#f1f3f4] border border-[#dadce0] text-[#1a73e8] rounded-md font-medium transition text-left"
+              onClick={() => handleQuickFill('demo_teacher', 'Teacher123!')}
+              className="p-2.5 bg-white hover:bg-[#f1f3f4] border border-[#dadce0] text-[#1a73e8] rounded-md font-medium transition text-left shadow-xs flex flex-col"
             >
-              👩‍🏫 Teacher Alice
+              <span className="text-[#202124] font-semibold flex items-center space-x-1">
+                <span>👩‍🏫</span>
+                <span>Demo Teacher</span>
+              </span>
+              <span className="text-[11px] text-[#5f6368] mt-0.5 font-mono">demo_teacher</span>
             </button>
             <button
               type="button"
-              onClick={() => handleQuickFill('student_bob', 'StudentPass123!')}
-              className="p-2 bg-white hover:bg-[#f1f3f4] border border-[#dadce0] text-[#1a73e8] rounded-md font-medium transition text-left"
+              onClick={() => handleQuickFill('demo_student', 'Student123!')}
+              className="p-2.5 bg-white hover:bg-[#f1f3f4] border border-[#dadce0] text-[#1a73e8] rounded-md font-medium transition text-left shadow-xs flex flex-col"
             >
-              👨‍🎓 Student Bob
+              <span className="text-[#202124] font-semibold flex items-center space-x-1">
+                <span>👨‍🎓</span>
+                <span>Demo Student</span>
+              </span>
+              <span className="text-[11px] text-[#5f6368] mt-0.5 font-mono">demo_student</span>
             </button>
+          </div>
+          <div className="flex items-center justify-between pt-1 border-t border-[#d2e3fc]/60 text-[11px] text-[#5f6368]">
+            <span>Alternative:</span>
+            <div className="space-x-2">
+              <button
+                type="button"
+                onClick={() => handleQuickFill('teacher_alice', 'TeacherPass123!')}
+                className="text-[#1a73e8] hover:underline"
+              >
+                Alice (Prof)
+              </button>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => handleQuickFill('student_bob', 'StudentPass123!')}
+                className="text-[#1a73e8] hover:underline"
+              >
+                Bob (Student)
+              </button>
+            </div>
           </div>
         </div>
 

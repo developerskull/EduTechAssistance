@@ -55,6 +55,9 @@ def seed_database():
         admin = get_or_create_user("admin", "admin@edutech.internal", "admin", "AdminPass123!")
         teacher1 = get_or_create_user("teacher_alice", "alice@university.edu", "teacher", "TeacherPass123!")
         teacher2 = get_or_create_user("prof_davis", "davis@university.edu", "teacher", "TeacherPass123!")
+        # Dedicated Quick Testing Accounts
+        demo_teacher = get_or_create_user("demo_teacher", "teacher@googleexam.test", "teacher", "Teacher123!")
+        demo_student = get_or_create_user("demo_student", "student@googleexam.test", "student", "Student123!")
         student1 = get_or_create_user("student_bob", "bob@student.edu", "student", "StudentPass123!")
         student2 = get_or_create_user("student_charlie", "charlie@student.edu", "student", "StudentPass123!")
         student3 = get_or_create_user("student_diana", "diana@student.edu", "student", "StudentPass123!")
@@ -71,8 +74,9 @@ def seed_database():
             db.session.add(cohort)
             db.session.flush()
 
-            for st in [student1, student2, student3, student4]:
-                db.session.add(CohortMember(cohort_id=cohort.id, student_id=st.id))
+            for st in [demo_student, student1, student2, student3, student4]:
+                if not CohortMember.query.filter_by(cohort_id=cohort.id, student_id=st.id).first():
+                    db.session.add(CohortMember(cohort_id=cohort.id, student_id=st.id))
 
         # 3. Sample Documents & Chunks
         doc = Document.query.filter_by(title="Operating Systems Principles.pdf").first()
@@ -270,6 +274,16 @@ def seed_database():
             )
             db.session.add(attempt3)
 
+            # Attempt 4: Demo Student (Pending / Ready for testing)
+            if not StudentExam.query.filter_by(exam_id=exam1.id, student_id=demo_student.id).first():
+                attempt_demo = StudentExam(
+                    exam_id=exam1.id,
+                    student_id=demo_student.id,
+                    status="pending",
+                    max_score=25
+                )
+                db.session.add(attempt_demo)
+
         # 5. Activity logs
         db.session.add(UserActivity(
             user_id=teacher1.id,
@@ -284,6 +298,8 @@ def seed_database():
 
         db.session.commit()
         print("✅ Database seeding complete!")
+        print("   - Demo Teacher: demo_teacher / Teacher123!")
+        print("   - Demo Student: demo_student / Student123! (Exam ready in portal)")
         print("   - Teacher: teacher_alice / TeacherPass123!")
         print("   - Student: student_bob / StudentPass123!")
         print("   - Student: student_charlie / StudentPass123! (Has pending submission ready for grading)")

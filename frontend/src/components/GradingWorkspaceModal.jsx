@@ -49,7 +49,7 @@ export default function GradingWorkspaceModal({ attempt, onClose, onEvaluated })
         feedback: updated.feedback
       };
       setAnswers(newAnswers);
-      setSuccessMsg('Answer evaluated and saved successfully!');
+      setSuccessMsg('Evaluation recorded successfully in Classroom grades!');
       if (onEvaluated) onEvaluated();
 
       // Automatically advance to next unverified answer if available
@@ -65,129 +65,129 @@ export default function GradingWorkspaceModal({ attempt, onClose, onEvaluated })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#202124]/50 backdrop-blur-xs overflow-y-auto font-sans">
+      <div className="bg-white w-full max-w-4xl rounded-lg shadow-xl border border-[#dadce0] overflow-hidden flex flex-col max-h-[92vh]">
+        {/* Google Classroom App Bar Header */}
+        <div className="px-6 py-4 border-b border-[#dadce0] flex items-center justify-between bg-white">
           <div>
             <div className="flex items-center space-x-2">
-              <h2 className="text-lg font-bold text-slate-900">Grading & Evaluation Workspace</h2>
-              <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-100 text-indigo-700">
-                Attempt #{attempt.id}
+              <h2 className="text-base font-semibold text-[#202124]">Classroom Grading Workspace</h2>
+              <span className="text-[11px] px-2 py-0.5 rounded font-medium bg-[#e8f0fe] text-[#1a73e8] border border-[#d2e3fc]">
+                Submission #{attempt.id}
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Student: <span className="font-semibold text-slate-700">{attempt.student_name}</span> | Exam: <span className="font-semibold text-slate-700">{attempt.exam?.title}</span>
+            <p className="text-xs text-[#5f6368] mt-0.5">
+              Student: <span className="font-semibold text-[#202124]">{attempt.student_name}</span> | Exam: <span className="font-semibold text-[#202124]">{attempt.exam?.title}</span>
             </p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition">
+          <button onClick={onClose} className="p-1.5 rounded-full text-[#5f6368] hover:bg-[#f1f3f4] transition">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-[#f8f9fa]">
           {/* Question Selector Tabs */}
-          <div className="flex items-center space-x-2 border-b border-slate-200 pb-3 overflow-x-auto">
+          <div className="flex items-center space-x-2 border-b border-[#dadce0] pb-3 overflow-x-auto bg-white p-3 rounded-lg border">
             {answers.map((ans, idx) => (
               <button
                 key={ans.id}
                 onClick={() => handleSelectAnswer(idx)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 whitespace-nowrap transition ${
+                className={`px-3 py-1.5 rounded text-xs font-medium flex items-center space-x-1.5 whitespace-nowrap transition ${
                   selectedIdx === idx
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-[#1a73e8] text-white shadow-xs'
                     : ans.is_verified
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[#e6f4ea] text-[#137333] border border-[#ceead6]'
+                    : 'bg-[#f1f3f4] text-[#3c4043] hover:bg-[#e8eaed]'
                 }`}
               >
                 <span>Q{idx + 1} ({ans.question?.question_type?.replace('_', ' ')})</span>
-                {ans.is_verified && <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />}
+                {ans.is_verified && <CheckCircle className="w-3.5 h-3.5 text-[#137333]" />}
               </button>
             ))}
           </div>
 
           {currentAnswer && (
-            <div className="space-y-5">
+            <div className="space-y-4">
               {/* Question Statement */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <div className="p-4 rounded-lg bg-white border border-[#dadce0]">
+                <div className="flex items-center justify-between text-xs font-semibold text-[#5f6368] mb-1.5">
                   <span>Question {selectedIdx + 1} ({question?.points || 1} Points max)</span>
-                  <span className="text-indigo-600 font-semibold">{question?.question_type}</span>
+                  <span className="text-[#1a73e8] font-medium uppercase text-[11px]">{question?.question_type}</span>
                 </div>
-                <p className="text-base font-medium text-slate-800">{question?.question_text}</p>
+                <p className="text-sm font-medium text-[#202124] leading-relaxed">{question?.question_text}</p>
               </div>
 
-              {/* SIDE BY SIDE ANSWER COMPARISON */}
+              {/* Side-by-side Answer Comparison */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* MODEL ANSWER (EMERALD GREEN) */}
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 shadow-sm flex flex-col justify-between">
+                {/* Model Answer */}
+                <div className="rounded-lg border border-[#ceead6] bg-[#e6f4ea]/40 p-4 flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-800 uppercase tracking-wider mb-2">
-                      <CheckCircle className="w-4 h-4 text-emerald-600" />
-                      <span>Model / Expected Answer</span>
+                    <div className="flex items-center space-x-1.5 text-xs font-semibold text-[#137333] uppercase tracking-wide mb-2">
+                      <CheckCircle className="w-4 h-4 text-[#137333]" />
+                      <span>Model Answer / Key</span>
                     </div>
-                    <div className="text-sm font-medium text-emerald-950 whitespace-pre-wrap leading-relaxed">
+                    <div className="text-xs font-medium text-[#137333] whitespace-pre-wrap leading-relaxed">
                       {question?.correct_answer}
                     </div>
                   </div>
                   {question?.ai_suggested_rubric && (
-                    <div className="mt-4 pt-3 border-t border-emerald-200/60 text-xs text-emerald-800">
-                      <span className="font-bold">Grading Rubric:</span> {question.ai_suggested_rubric}
+                    <div className="mt-3 pt-3 border-t border-[#ceead6] text-xs text-[#137333]">
+                      <span className="font-semibold">Grading Rubric:</span> {question.ai_suggested_rubric}
                     </div>
                   )}
                 </div>
 
-                {/* STUDENT ANSWER (INDIGO BLUE) */}
-                <div className="rounded-xl border border-indigo-200 bg-indigo-50/70 p-4 shadow-sm flex flex-col justify-between">
+                {/* Student Submitted Answer */}
+                <div className="rounded-lg border border-[#d2e3fc] bg-[#e8f0fe]/40 p-4 flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center space-x-1.5 text-xs font-bold text-indigo-800 uppercase tracking-wider mb-2">
-                      <div className="w-2 h-2 rounded-full bg-indigo-600"></div>
-                      <span>Student's Submitted Answer</span>
+                    <div className="flex items-center space-x-1.5 text-xs font-semibold text-[#1a73e8] uppercase tracking-wide mb-2">
+                      <div className="w-2 h-2 rounded-full bg-[#1a73e8]"></div>
+                      <span>Student Submission</span>
                     </div>
-                    <div className="text-sm font-medium text-indigo-950 whitespace-pre-wrap leading-relaxed">
-                      {currentAnswer.student_answer || <span className="italic text-slate-400">No answer provided</span>}
+                    <div className="text-xs font-medium text-[#202124] whitespace-pre-wrap leading-relaxed">
+                      {currentAnswer.student_answer || <span className="italic text-[#5f6368]">No answer submitted</span>}
                     </div>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-indigo-200/60 text-xs text-indigo-700 flex justify-between items-center">
-                    <span>Status: {currentAnswer.is_verified ? 'Graded' : 'Awaiting Teacher Grade'}</span>
-                    <span className="font-bold">Current Score: {currentAnswer.score} / {question?.points || 1}</span>
+                  <div className="mt-3 pt-3 border-t border-[#d2e3fc] text-xs text-[#1a73e8] flex justify-between items-center font-medium">
+                    <span>Status: {currentAnswer.is_verified ? 'Graded' : 'Turned In'}</span>
+                    <span className="font-bold">Current: {currentAnswer.score} / {question?.points || 1} pts</span>
                   </div>
                 </div>
               </div>
 
-              {/* AI SUGGESTION BADGE */}
+              {/* AI Auto-Grading Suggestion */}
               {currentAnswer.ai_suggested_score !== null && (
-                <div className="p-4 rounded-xl bg-violet-50 border border-violet-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-start space-x-3">
-                    <Sparkles className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                <div className="p-3.5 rounded-lg bg-[#fef7e0] border border-[#feefc3] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-start space-x-2.5">
+                    <Sparkles className="w-4 h-4 text-[#ea8600] flex-shrink-0 mt-0.5" />
                     <div>
                       <div className="flex items-center space-x-2">
-                        <span className="text-xs font-bold uppercase tracking-wider text-violet-900">
-                          AI Suggested Score
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#b06000]">
+                          Gemini AI Suggested Grade
                         </span>
-                        <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-200 text-violet-800">
+                        <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#fff] border border-[#feefc3] text-[#b06000]">
                           {currentAnswer.ai_suggested_score} / {question?.points || 1} pts
                         </span>
                       </div>
-                      <p className="text-xs text-violet-700 mt-0.5">{currentAnswer.ai_rationale}</p>
+                      <p className="text-xs text-[#7c4a03] mt-0.5">{currentAnswer.ai_rationale}</p>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={handleApplyAISuggestion}
-                    className="px-3 py-1.5 text-xs font-semibold bg-violet-600 hover:bg-violet-700 text-white rounded-lg transition whitespace-nowrap shadow-sm shadow-violet-200"
+                    className="px-3 py-1.5 text-xs font-medium bg-[#1a73e8] hover:bg-[#1557b0] text-white rounded transition whitespace-nowrap shadow-xs"
                   >
                     Apply Suggestion
                   </button>
                 </div>
               )}
 
-              {/* TEACHER EVALUATION INPUTS */}
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              {/* Teacher Evaluation Panel */}
+              <div className="bg-white p-4 rounded-lg border border-[#dadce0] space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                    Assign Final Score (0 to {question?.points || 1})
+                  <label className="text-xs font-medium text-[#202124]">
+                    Assign Points (0 to {question?.points || 1})
                   </label>
                   <input
                     type="number"
@@ -195,35 +195,35 @@ export default function GradingWorkspaceModal({ attempt, onClose, onEvaluated })
                     max={question?.points || 1}
                     value={score}
                     onChange={(e) => setScore(e.target.value)}
-                    className="w-24 px-3 py-1.5 border border-slate-300 rounded-lg text-center font-bold text-sm bg-white focus:ring-2 focus:ring-indigo-500"
+                    className="w-24 px-3 py-1.5 border border-[#dadce0] rounded text-center font-bold text-sm bg-white focus:outline-none focus:border-[#1a73e8]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                    Teacher Feedback & Commentary
+                  <label className="block text-xs font-medium text-[#5f6368] mb-1">
+                    Private Comment & Feedback for Student
                   </label>
                   <textarea
                     rows="2"
                     value={feedback}
                     onChange={(e) => setFeedback(e.target.value)}
-                    placeholder="Provide supportive explanation or guidance on this answer..."
-                    className="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Add feedback to help the student understand..."
+                    className="w-full p-2.5 border border-[#dadce0] rounded text-xs bg-white focus:outline-none focus:border-[#1a73e8] text-[#202124]"
                   />
                 </div>
 
                 {successMsg && (
-                  <p className="text-xs text-emerald-600 font-semibold">{successMsg}</p>
+                  <p className="text-xs text-[#137333] font-semibold">{successMsg}</p>
                 )}
 
-                <div className="flex justify-end pt-2">
+                <div className="flex justify-end pt-1">
                   <button
                     onClick={handleSaveEvaluation}
                     disabled={saving}
-                    className="flex items-center space-x-1.5 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-sm transition disabled:opacity-50"
+                    className="flex items-center space-x-1.5 px-4 py-2 bg-[#1a73e8] hover:bg-[#1557b0] text-white text-xs font-medium rounded shadow-xs transition disabled:opacity-50"
                   >
-                    <span>{saving ? 'Saving...' : 'Save Grade & Continue'}</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <span>{saving ? 'Saving...' : 'Save Grade & Next'}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -234,4 +234,3 @@ export default function GradingWorkspaceModal({ attempt, onClose, onEvaluated })
     </div>
   );
 }
-

@@ -21,101 +21,100 @@ export default function ExamOverviewModal({ examId, onClose, onSelectQuestionAna
   }, [examId]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
-        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#202124]/50 backdrop-blur-xs overflow-y-auto font-sans">
+      <div className="bg-white w-full max-w-4xl rounded-lg shadow-xl border border-[#dadce0] overflow-hidden flex flex-col max-h-[92vh]">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-[#dadce0] flex items-center justify-between bg-white">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Exam Class Analytics & Overview</h2>
-            <p className="text-xs text-slate-500 mt-0.5">{data?.title || 'Loading exam data...'}</p>
+            <h2 className="text-base font-semibold text-[#202124]">Classroom Performance & Analytics</h2>
+            <p className="text-xs text-[#5f6368] mt-0.5">{data?.title || 'Loading assessment statistics...'}</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition">
+          <button onClick={onClose} className="p-1.5 rounded-full text-[#5f6368] hover:bg-[#f1f3f4] transition">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-slate-400">Loading class performance analytics...</div>
+          <div className="p-12 text-center text-xs text-[#5f6368]">Loading class performance analytics...</div>
         ) : (
-          <div className="p-6 space-y-6 overflow-y-auto">
+          <div className="p-6 space-y-5 overflow-y-auto bg-[#f8f9fa]">
             {/* Stat Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100">
-                <div className="flex items-center space-x-2 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-1">
-                  <Users className="w-4 h-4" />
-                  <span>Submissions</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-3.5 rounded-lg bg-white border border-[#dadce0]">
+                <div className="flex items-center space-x-1.5 text-[#1a73e8] text-[11px] font-semibold uppercase tracking-wider mb-1">
+                  <Users className="w-3.5 h-3.5" />
+                  <span>Turned In</span>
                 </div>
-                <div className="text-2xl font-black text-indigo-950">
-                  {data?.total_submissions} / {data?.total_assigned}
+                <div className="text-2xl font-bold text-[#202124]">
+                  {data?.total_submissions} <span className="text-xs font-normal text-[#5f6368]">/ {data?.total_assigned}</span>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
-                <div className="flex items-center space-x-2 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-1">
-                  <Award className="w-4 h-4" />
+              <div className="p-3.5 rounded-lg bg-white border border-[#dadce0]">
+                <div className="flex items-center space-x-1.5 text-[#137333] text-[11px] font-semibold uppercase tracking-wider mb-1">
+                  <Award className="w-3.5 h-3.5" />
                   <span>Class Average</span>
                 </div>
-                <div className="text-2xl font-black text-emerald-950">
-                  {data?.average_score} <span className="text-sm font-semibold text-emerald-700">/ {data?.max_score}</span>
+                <div className="text-2xl font-bold text-[#202124]">
+                  {data?.average_score} <span className="text-xs font-normal text-[#5f6368]">/ {data?.max_score}</span>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-amber-50 border border-amber-100">
-                <div className="flex items-center space-x-2 text-amber-700 text-xs font-bold uppercase tracking-wider mb-1">
-                  <Clock className="w-4 h-4" />
+              <div className="p-3.5 rounded-lg bg-white border border-[#dadce0]">
+                <div className="flex items-center space-x-1.5 text-[#ea8600] text-[11px] font-semibold uppercase tracking-wider mb-1">
+                  <Clock className="w-3.5 h-3.5" />
                   <span>Pending Grading</span>
                 </div>
-                <div className="text-2xl font-black text-amber-950">
+                <div className="text-2xl font-bold text-[#202124]">
                   {data?.pending_evaluations}
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-violet-50 border border-violet-100">
-                <div className="flex items-center space-x-2 text-violet-700 text-xs font-bold uppercase tracking-wider mb-1">
-                  <BarChart3 className="w-4 h-4" />
+              <div className="p-3.5 rounded-lg bg-white border border-[#dadce0]">
+                <div className="flex items-center space-x-1.5 text-[#1a73e8] text-[11px] font-semibold uppercase tracking-wider mb-1">
+                  <BarChart3 className="w-3.5 h-3.5" />
                   <span>Completion Rate</span>
                 </div>
-                <div className="text-2xl font-black text-violet-950">
+                <div className="text-2xl font-bold text-[#202124]">
                   {data?.total_assigned > 0 ? Math.round((data.total_submissions / data.total_assigned) * 100) : 0}%
                 </div>
               </div>
             </div>
 
             {/* Question-by-Question Accuracy Bars */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
-                Question Performance & Accuracy
+            <div className="bg-white p-4 rounded-lg border border-[#dadce0] space-y-3">
+              <h3 className="text-xs font-bold text-[#202124] uppercase tracking-wider">
+                Item Analysis & Accuracy
               </h3>
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 {data?.question_stats?.map((q, idx) => (
-                  <div key={q.question_id} className="p-3 rounded-xl border border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div key={q.question_id} className="p-3 rounded border border-[#dadce0] bg-[#f8f9fa] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">
-                        <span className="font-bold text-xs text-slate-700">Q{idx + 1}:</span>
-                        <span className="text-xs text-slate-600 truncate max-w-md">{q.question_text}</span>
-                        <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700">
+                        <span className="font-semibold text-xs text-[#202124]">Q{idx + 1}:</span>
+                        <span className="text-xs text-[#5f6368] truncate max-w-md">{q.question_text}</span>
+                        <span className="text-[10px] uppercase font-medium px-1.5 py-0.5 rounded bg-[#e8eaed] text-[#3c4043]">
                           {q.question_type}
                         </span>
                       </div>
                       {/* Accuracy Bar */}
-                      <div className="mt-2 w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div className="mt-2 w-full bg-[#e8eaed] h-1.5 rounded-full overflow-hidden">
                         <div
-                          className={`h-full rounded-full ${
-                            q.accuracy_percentage >= 75
-                              ? 'bg-emerald-500'
-                              : q.accuracy_percentage >= 50
-                              ? 'bg-amber-500'
-                              : 'bg-red-500'
-                          }`}
-                          style={{ width: `${q.accuracy_percentage}%` }}
+                          className="bg-[#1a73e8] h-full rounded-full transition-all duration-500"
+                          style={{ width: `${q.accuracy_rate}%` }}
                         />
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <span className="text-xs font-bold text-slate-700">{q.accuracy_percentage}% Accuracy</span>
+
+                    <div className="flex items-center space-x-3 text-xs">
+                      <div className="text-right">
+                        <span className="font-bold text-[#202124]">{q.accuracy_rate}%</span>
+                        <span className="text-[11px] text-[#5f6368] ml-1">correct</span>
+                      </div>
                       {onSelectQuestionAnalytics && (
                         <button
                           onClick={() => onSelectQuestionAnalytics(q.question_id)}
-                          className="px-2.5 py-1 text-xs font-semibold bg-white border border-slate-300 hover:bg-slate-100 rounded-lg text-slate-700 transition"
+                          className="px-2.5 py-1 text-xs font-medium text-[#1a73e8] hover:bg-[#e8f0fe] rounded transition border border-[#d2e3fc]"
                         >
                           Deep Dive
                         </button>
@@ -125,49 +124,9 @@ export default function ExamOverviewModal({ examId, onClose, onSelectQuestionAna
                 ))}
               </div>
             </div>
-
-            {/* Submissions List */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
-                Student Submissions ({data?.submissions?.length || 0})
-              </h3>
-              <div className="border border-slate-200 rounded-xl overflow-hidden">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider">
-                    <tr>
-                      <th className="p-3">Student</th>
-                      <th className="p-3">Status</th>
-                      <th className="p-3">Score</th>
-                      <th className="p-3">Percentage</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200">
-                    {data?.submissions?.map((s) => (
-                      <tr key={s.id} className="hover:bg-slate-50">
-                        <td className="p-3 font-semibold text-slate-800">{s.student_name}</td>
-                        <td className="p-3">
-                          <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider ${
-                            s.status === 'evaluated'
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : s.status === 'completed'
-                              ? 'bg-amber-100 text-amber-800'
-                              : 'bg-slate-100 text-slate-600'
-                          }`}>
-                            {s.status}
-                          </span>
-                        </td>
-                        <td className="p-3 font-bold text-slate-700">{s.total_score} / {data?.max_score}</td>
-                        <td className="p-3 font-bold text-slate-900">{s.percentage}%</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
           </div>
         )}
       </div>
     </div>
   );
 }
-
